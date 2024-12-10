@@ -4,14 +4,14 @@ from pygame.locals import *
 
 pygame.init()
 
-screen_width = 1000
-screen_height = 1000
+screen_width = 500
+screen_height = 500
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Platformer')
 
 #define variables
-tile_size = 50
+tile_size = 25
 #load images
 bg_img = pygame.image.load('img/background-2.jpeg')
 
@@ -19,6 +19,36 @@ def draw_grid():
 	for line in range(0, 20):
 		pygame.draw.line(screen, (255, 255, 255), (0, line * tile_size), (screen_width, line * tile_size))
 		pygame.draw.line(screen, (255, 255, 255), (line * tile_size, 0), (line * tile_size, screen_height))
+
+class Player():
+    def __init__(self, x, y):
+         img = pygame.image.load('img/guy-1.jpeg')
+         self.image = pygame.transform.scale(img, (20, 40))
+         self.rect = self.image.get_rect()
+         self.rect.x = x
+         self.rect.y = y
+         self.velocity = 50
+
+    def update(self, dt):
+         dx = 0
+         dy = 0
+         #get inputs
+         key = pygame.key.get_pressed()
+         if key[pygame.K_LEFT]:
+              dx -= self.velocity * dt
+         if key[pygame.K_RIGHT]:
+              dx += self.velocity * dt
+        
+         #check for collision here
+
+         #update player coordinates
+         self.rect.x += dx
+         self.rect.y += dy
+         
+         #draw player onto screen
+         screen.blit(self.image, self.rect)
+         
+         
 
 class World():
       def __init__(self, data):
@@ -73,16 +103,19 @@ world_data =[
 [1, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
 [1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
+player = Player(50, screen_height - 65)
 world = World(world_data)
 
-screen.fill((0,0,0))
+clock = pygame.time.Clock()
 run = True 
 while run:
+    dt = clock.tick(60) / 1000.0
 
-
+    
     screen.blit(bg_img,bg_img.get_rect())
     world.draw()
-    draw_grid()
+    player.__init__
+    player.update(dt)
     print(world.tile_list)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
